@@ -104,6 +104,6 @@ int main(){
   }
 
   gb.destroy();
-  std::getchar();
+  //std::getchar();
   return 0;
 }
