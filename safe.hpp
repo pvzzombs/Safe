@@ -374,9 +374,10 @@ public:
     return size_;
   }
 
-  void for_each( void (*F)(T &, size_t) ){
+  template <typename Func>
+  void for_each( Func fun ){
     for(size_t i=0; i<size_; i++){
-      (*F)(data[i], i);
+      fun(data[i], i);
     }
   }
 
@@ -445,9 +446,10 @@ public:
     return size_;
   }
 
-  void for_each( void (*F)(T &, size_t) ){
+  template <typename Func>
+  void for_each( Func fun ){
     for(size_t i=0; i<size_; i++){
-      (*F)(data[i], i);
+      fun(data[i], i);
     }
   }
 

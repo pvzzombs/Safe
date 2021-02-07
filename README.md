@@ -148,8 +148,32 @@ terminate called after throwing an instance of 'bad_memory_access_error_debug'
 
 What we did is just replaced ``int a[10]`` with ``arr_<int> a(10, __LINE__)``. Nice and easy!  
 
+#### More example:
 
-
+```
+#define DEBUG_
+#include "safe.hpp"
+int main(){
+  arr_<arr_<int>> a(10, __LINE__);
+  a.for_each([](arr_<int> &x, size_t i){
+    //allocate an array  since this is 2d array of 10 by 10
+    //the elements are not yet contain any allocation
+    x.alloc(10, __LINE__);
+  });
+  
+  a.for_each([](arr_<int>& x, size_t i){
+    x.for_each([&i](int &y, size_t j){
+      y = int(j);
+    });
+  });
+  
+  a.for_each([](arr_<int>& x, size_t i){
+    x.print();
+  });
+  
+  return 0;
+}
+```
 
 
 # LICENSE
