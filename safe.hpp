@@ -4,6 +4,10 @@
 //#include <stdlib.h>
 //#include <crtdbg.h>
 
+#if (__cplusplus>=199711L)
+#define nullptr NULL
+#endif
+
 #ifdef DEBUG_
 
 template <typename T>
@@ -307,10 +311,17 @@ class arr_{
   bool init_;
   size_t size_;
   T * data;
+
+#if (__cplusplus>=201103L)
   arr_(const arr_<T> &) = delete;
-  arr_(arr_<T> &&) = delete;
   arr_ & operator= (const arr_<T> &) = delete;
+  arr_(arr_<T> &&) = delete;
   arr_ & operator= (arr_<T> &&) = delete;
+#elif (__cplusplus>=199711L)
+  arr_(const arr_<T> &);
+  arr_ & operator= (const arr_<T> &);
+#endif
+
 public:
   arr_(): size_(0), destroy(false), init_(false){
     data = nullptr;
@@ -391,10 +402,17 @@ class arr_{
   bool init_;
   size_t size_;
   T * data;
+
+#if (__cplusplus>=201103L)
   arr_(const arr_<T> &) = delete;
-  arr_(arr_<T> &&) = delete;
   arr_ & operator= (const arr_<T> &) = delete;
+  arr_(arr_<T> &&) = delete;
   arr_ & operator= (arr_<T> &&) = delete;
+#elif (__cplusplus>=199711L)
+  arr_(const arr_<T> &);
+  arr_ & operator= (const arr_<T> &);
+#endif
+
 public:
   arr_(): size_(0), destroy(false), init_(false){
     data = nullptr;

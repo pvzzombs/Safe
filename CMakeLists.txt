@@ -1,7 +1,15 @@
+cmake_minimum_required(VERSION 3.1)
 
 project(HEAP CXX)
 
-set ( CXX_STANDARD 17 )
+if ( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MINGW")
+  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++03")
+  MESSAGE("GNU detected")
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+  MESSAGE("MSVC detected") 
+endif()
+
+set ( CXX_STANDARD 03 )
 
 add_executable( HEAP heap.cpp )
 

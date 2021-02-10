@@ -1,6 +1,6 @@
 # Safe
 [![Build Status](https://img.shields.io/github/workflow/status/pvzzombs/Safe/CMake)](https://github.com/pvzzombs/Safe/actions)  
-My simple C++ header for detecting memory leaks and invalid array access.
+My simple C++ header for detecting memory leaks and invalid array access. Supports C++03 and above.
 
 ## Get Started
 1. Get the ``safe.hpp`` in this repository either by cloning this or downloading the zip/tar.gz file.
