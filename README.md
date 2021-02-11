@@ -40,7 +40,7 @@ int main(){
 }
 ```  
 Let me explain this code example. First we define the macro ``DEBUG_``, this will allow us to catch  
-the memory leak. The we include the header file, ofcourse. Then we create a memory heap.  This  
+the memory leak. Then we include the header file, ofcourse. Then we create a memory heap.  This  
 is not a real memory heap. This only acts as a memory manager. The operating system is still  
 the one who allocates memory for us. Then we replace ``new int[10]`` with ``new_<int>(10, gb)``. That's it!  
 Now compile the code. This should work and you will be able to see its output like this:  
