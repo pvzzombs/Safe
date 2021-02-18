@@ -5,3 +5,17 @@ build/
 build/*.*
 .vscode/
 .vscode/*.*
+
+#Codelite generated file
+.codelite/
+Debug/
+Makefile
+Safe.mk
+Safe.project
+Safe.txt
+Safe.workspace
+compile_flags.txt
+tags
+
+#codes
+debug.cpp
