@@ -181,6 +181,78 @@ public:
     return false;
   }
 
+  bool free_address(T * addr_t){
+    if(HEAD_INIT){
+
+      heap_linked_list<T> * temp_ = HEAD;
+      bool has_left, has_right;
+      while(!(temp_ == nullptr)){
+        has_left = false; has_right = false;
+        if(temp_->address_holder == addr_t){
+          //if the current node is the one
+          //that has the address we want to find:
+          //check whether it has a left node
+          if( !(temp_->LEFT == nullptr) )
+            has_left = true;
+
+          if( !(temp_->RIGHT == nullptr) )
+            has_right = true;
+
+          if( has_left && has_right ){
+            //detach itself
+            // L = M = R
+            // L _ M - R
+            // L _ R - M
+            // L = R - M
+            // L = R (x M)
+
+            temp_->LEFT->RIGHT = temp_->RIGHT;
+            temp_->RIGHT->LEFT = temp_->LEFT;
+          }else if( has_right && !has_left ){
+            //we need to replace the head ofcourse
+            temp_->RIGHT->LEFT = nullptr;
+            HEAD = temp_->RIGHT;
+            //check if the new head has no longer node
+            //if it is, then it means it is the tail
+            //we remove the bool TAIL_INT
+            if(HEAD->RIGHT == nullptr){
+              TAIL = HEAD;
+              TAIL_INIT = false;
+            }
+          }else if( has_left && !has_right ){
+            temp_->LEFT->RIGHT = nullptr;
+            //check if the left node of the tail
+            //contains another left node
+            //if nott, then there is only one node
+            //existing and it is the head
+            if(temp_->LEFT->LEFT == nullptr){
+              TAIL = HEAD;
+              TAIL_INIT = false;
+            }
+          }else{
+            //this the head
+            HEAD_INIT = false;
+          }
+
+          //note that we did not deleted the
+          //allocation of addr_t, we just
+          //deleted this node so we know
+          //that it no longer exists
+          //std::cout << m_7 << (void *)temp_->address_holder << m_11 << "\n";
+          delete [] temp_->address_holder;
+          delete temp_;
+          return true;
+        }
+        if(!(temp_->RIGHT == nullptr)){
+          temp_ = temp_->RIGHT;
+        }else{
+          return false;
+        }
+      }
+    }
+    return false;
+  }
+
   void destroy(){
     if(!destroyed_){
       if(HEAD_INIT){
@@ -390,6 +462,7 @@ public:
     }else{
       size_ = s;
       destroy = true;
+      init_ = true;
     }
     return true;
   }

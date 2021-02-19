@@ -5,6 +5,7 @@ build/
 build/*.*
 .vscode/
 .vscode/*.*
+*.bak
 
 #Codelite generated file
 .codelite/
