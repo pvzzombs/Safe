@@ -31,8 +31,9 @@ const char * m_15 = "-- Array is empty? ";
 const char * m_16 = "-- Array index out of bounds : index ";
 const char * m_17 = "Array is not initialized";
 const char * m_18 = "-- Warning: An array with size 0 will be initialized with a size of 1\n";
+const char * m_19 = "-- Address found at ";
 
-#ifdef DEBUG_
+#if defined(DEBUG_) || defined(SAFE_USE_FUNCTIONALITY)
 
 template <typename T>
 class heap_linked_list{
@@ -277,6 +278,23 @@ public:
     }
     destroyed_ = true;
   }
+  
+  bool find_address(T * addr_t){
+    if(HEAD_INIT){
+      heap_linked_list<T> * temp_ = HEAD;
+      while(!(temp_ == nullptr)){
+        if(temp_->address_holder == addr_t){
+          return true;
+        }
+        if(!(temp_->RIGHT == nullptr)){
+          temp_ = temp_->RIGHT;
+        }else{
+          break;
+        }
+      }
+    }
+    return false;
+  }
 
   void free_address(){
     if(HEAD_INIT){
@@ -315,8 +333,20 @@ template <typename T>
 class mem_heap_debug{
 public:
   mem_heap_debug(){
-  };
+  }
+  bool add_address(T * addr_t){
+    return false;
+  }
+  bool remove_address(T * addr_t){
+    return false;
+  }
+  bool free_address(T * addr_t){
+    return false;
+  }
   void destroy(){
+  }
+  bool find_address(T * addr_t){
+    return false;
   }
   void free_address(){
   }
@@ -348,7 +378,7 @@ class bad_array_uninitialized_error_debug: public std::exception{
   }
 } BAUED_;
 
-#ifdef DEBUG_
+#if defined(DEBUG_) || defined(SAFE_USE_FUNCTIONALITY)
 template <typename T>
 T * new_(size_t size, mem_heap_debug<T> &heap_, int line=0){
   T * d = NULL;
@@ -358,13 +388,13 @@ T * new_(size_t size, mem_heap_debug<T> &heap_, int line=0){
   }
 
   bool result_ = heap_.add_address(d);
-
+#ifdef DEBUG_
   if(result_){
     std::cout << m_6 << (void *)d << m_12 << size << m_10 << line << "\n";
   }else{
     std::cout << m_9;
   }
-
+#endif
   return d;
 }
 /// D
@@ -378,9 +408,11 @@ void del_(T * block, mem_heap_debug<T> &heap_, int line=0){
 
   if(result_){
     delete[] block;
+#ifdef DEBUG_
     std::cout << m_7 << (void *)block << m_11 << line << "\n";
   }else{
     std::cout << m_8;
+#endif
   }
 }
 
@@ -405,7 +437,7 @@ void del_(T * block, mem_heap_debug<T> &heap_, int line=0){
 
 #endif
 
-#ifdef DEBUG_
+#if defined(DEBUG_) || defined(SAFE_USE_FUNCTIONALITY)
 
 template <typename T>
 class arr_{
@@ -430,20 +462,26 @@ public:
   }
   arr_(size_t s, unsigned int line=0): size_(s), destroy(true), init_(true){
     if(s == 0){
+#ifdef DEBUG_
       std::cout << m_18;
+#endif
       s = 1;
       size_ = 1;
     }
     data = new T[s];
+#ifdef DEBUG_
     std::cout << m_13 << line << std::endl;
+#endif
   }
 
   ~arr_(){
     if(destroy){
       delete [] data;
+#ifdef DEBUG_
       std::cout << m_14 << std::endl;
     }else{
       std::cout << m_15 << std::endl;
+#endif
     }
   }
 
@@ -452,7 +490,9 @@ public:
       return false;
     }
     if(s == 0){
+#ifdef DEBUG_
       std::cout << m_18;
+#endif
       s = 1;
       size_ = 1;
     }
@@ -479,7 +519,9 @@ public:
       throw BAUED_;
     }
     if(index < 0 || index > (size_-1)){
+#ifdef DEBUG_
       std::cout << m_16 << index << std::endl;
+#endif
       throw BMCRD_;
     }
     return data[index];
@@ -490,7 +532,9 @@ public:
       throw BAUED_;
     }
     if(index < 0 || index > (size_-1)){
+#ifdef DEBUG_
       std::cout << m_16 << index << std::endl;
+#endif
       throw BMCRD_;
     }
     return data[index];
