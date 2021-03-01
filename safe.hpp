@@ -1,8 +1,8 @@
 #include <iostream>
 #include <exception>
-//#include <vector>
-//#include <stdlib.h>
-//#include <crtdbg.h>
+#if (__cplusplus>=201103L)
+#include <initializer_list>
+#endif
 
 #ifdef SAFE_USE_NAMESPACE
 namespace safe {
@@ -441,9 +441,9 @@ void del_(T * block, mem_heap_debug<T> &heap_, int line=0){
 
 template <typename T>
 class arr_{
+  size_t size_;
   bool destroy;
   bool init_;
-  size_t size_;
   T * data;
 
 #if (__cplusplus>=201103L)
@@ -473,7 +473,24 @@ public:
     std::cout << m_13 << line << std::endl;
 #endif
   }
-
+#if (__cplusplus>=201103L)
+  arr_(std::initializer_list<T> arr_list): size_(arr_list.size()), destroy(true), init_(true){
+    if(size_ == 0){
+      destroy = false;
+      init_ = false;
+    }else{
+      data = new T[size_];
+      size_t i=0;
+      for(const T & elem : arr_list){
+        data[i] = elem;
+        ++i;
+      }
+#ifdef DEBUG_
+  std::cout << m_13 << std::endl;
+#endif
+    }
+  }
+#endif
   ~arr_(){
     if(destroy){
       delete [] data;
@@ -561,9 +578,9 @@ public:
 
 template <typename T>
 class arr_{
+  size_t size_;
   bool destroy;
   bool init_;
-  size_t size_;
   T * data;
 
 #if (__cplusplus>=201103L)
@@ -583,7 +600,21 @@ public:
   arr_(size_t s, unsigned int line=0): size_(s), destroy(true), init_(true){
     data = new T[s];
   }
-
+#if (__cplusplus>=201103L)
+  arr_(std::initializer_list<T> arr_list): size_(arr_list.size()), destroy(true), init_(true){
+    if(size_ == 0){
+      destroy = false;
+      init_ = false;
+    }else{
+      data = new T[size_];
+      size_t i=0;
+      for(const T & elem : arr_list){
+        data[i] = elem;
+        ++i;
+      }
+    }
+  }
+#endif
   ~arr_(){
     if(destroy){
       delete [] data;
