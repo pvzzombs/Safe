@@ -27,7 +27,7 @@ const char * m_11 = " ~ at line ";
 const char * m_12 = " ~ size ";
 const char * m_13 = "-- New array at line ";
 const char * m_14 = "-- Array released...";
-const char * m_15 = "-- Array is empty? ";
+const char * m_15 = "-- Array is empty";
 const char * m_16 = "-- Array index out of bounds : index ";
 const char * m_17 = "Array is not initialized";
 const char * m_18 = "-- Warning: An array with size 0 will be initialized with a size of 1\n";
@@ -447,14 +447,24 @@ class arr_{
   T * data;
 
 #if (__cplusplus>=201103L)
-  arr_(const arr_<T> &) = delete;
-  arr_ & operator= (const arr_<T> &) = delete;
-  arr_(arr_<T> &&) = delete;
   arr_ & operator= (arr_<T> &&) = delete;
-#elif (__cplusplus>=199711L)
-  arr_(const arr_<T> &);
-  arr_ & operator= (const arr_<T> &);
 #endif
+  template <class X> void swap_(X& a, X& b){
+    X c(a); a=b; b=c;
+  }
+  void swap(arr_<T> & f, arr_<T> & l){
+#if (__cplusplus>=201103L)
+    std::swap(f.size_, l.size_);
+    std::swap(f.destroy, l.destroy);
+    std::swap(f.init_, l.init_);
+    std::swap(f.data, l.data);
+#else
+    swap_(f.size_, l.size_);
+    swap_(f.destroy, l.destroy);
+    swap_(f.init_, l.init_);
+    swap_(f.data, l.data);
+#endif
+  }
 
 public:
   arr_(): size_(0), destroy(false), init_(false){
@@ -478,6 +488,9 @@ public:
     if(size_ == 0){
       destroy = false;
       init_ = false;
+#ifdef DEBUG_
+  std::cout << m_15 << std::endl;
+#endif
     }else{
       data = new T[size_];
       size_t i=0;
@@ -491,13 +504,38 @@ public:
     }
   }
 #endif
+  arr_(const arr_<T> & rhs_): size_(rhs_.size()), destroy(true), init_(true){
+    data = nullptr;
+    if(rhs_.size() == 0){
+#ifdef DEBUG_
+      std::cout << m_18;
+#endif
+      size_ = 1;
+    }
+    data = new T[size_];
+    for(size_t i=0; i<size_; i++){
+      data[i] = rhs_.at(i);
+    }
+#ifdef DEBUG_
+    std::cout << m_13 << std::endl;
+#endif
+  }
+  arr_ & operator= (const arr_<T> & rhs_){
+    arr_<T> t_(rhs_);
+    swap(*this, t_);
+    return *this;
+  }
+#if (__cplusplus>=201103L)
+  arr_(arr_<T> && rhs_): size_(0), destroy(false), init_(false){
+    data = nullptr;
+    swap(*this, rhs_);
+  }
+#endif
   ~arr_(){
     if(destroy){
       delete [] data;
 #ifdef DEBUG_
       std::cout << m_14 << std::endl;
-    }else{
-      std::cout << m_15 << std::endl;
 #endif
     }
   }
@@ -531,11 +569,12 @@ public:
     std::cout << std::endl;
   }
 
-  T & at(long index){
+  T & at(long index) const {
     if(!init_){
       throw BAUED_;
     }
-    if(index < 0 || index > (size_-1)){
+    long t = (long)(size_-1);
+    if(index < 0 || index > t){
 #ifdef DEBUG_
       std::cout << m_16 << index << std::endl;
 #endif
@@ -544,11 +583,12 @@ public:
     return data[index];
   }
 
-  T & operator[] (long index){
+  T & operator[] (long index) const {
     if(!init_){
       throw BAUED_;
     }
-    if(index < 0 || index > (size_-1)){
+    long t = (long)(size_-1);
+    if(index < 0 || index > t){
 #ifdef DEBUG_
       std::cout << m_16 << index << std::endl;
 #endif
@@ -557,11 +597,11 @@ public:
     return data[index];
   }
 
-  size_t size(){
+  size_t size() const {
     return size_;
   }
 
-  size_t length(){
+  size_t length() const {
     return size_;
   }
 
@@ -584,14 +624,24 @@ class arr_{
   T * data;
 
 #if (__cplusplus>=201103L)
-  arr_(const arr_<T> &) = delete;
-  arr_ & operator= (const arr_<T> &) = delete;
-  arr_(arr_<T> &&) = delete;
   arr_ & operator= (arr_<T> &&) = delete;
-#elif (__cplusplus>=199711L)
-  arr_(const arr_<T> &);
-  arr_ & operator= (const arr_<T> &);
 #endif
+  template <class X> void swap_(X& a, X& b){
+    X c(a); a=b; b=c;
+  }
+  void swap(arr_<T> & f, arr_<T> & l){
+#if (__cplusplus>=201103L)
+    std::swap(f.size_, l.size_);
+    std::swap(f.destroy, l.destroy);
+    std::swap(f.init_, l.init_);
+    std::swap(f.data, l.data);
+#else
+    swap_(f.size_, l.size_);
+    swap_(f.destroy, l.destroy);
+    swap_(f.init_, l.init_);
+    swap_(f.data, l.data);
+#endif
+  }
 
 public:
   arr_(): size_(0), destroy(false), init_(false){
@@ -615,6 +665,27 @@ public:
     }
   }
 #endif
+  arr_(const arr_<T> & rhs_): size_(rhs_.size()), destroy(true), init_(true){
+    data = nullptr;
+    if(rhs_.size() == 0){
+      size_ = 1;
+    }
+    data = new T[size_];
+    for(size_t i=0; i<size_; i++){
+      data[i] = rhs_.at(i);
+    }
+  }
+  arr_ & operator= (const arr_<T> & rhs_){
+    arr_<T> t_(rhs_);
+    swap(*this, t_);
+    return *this;
+  }
+#if (__cplusplus>=201103L)
+  arr_(arr_<T> && rhs_): size_(0), destroy(false), init_(false){
+    data = nullptr;
+    swap(*this, rhs_);
+  }
+#endif
   ~arr_(){
     if(destroy){
       delete [] data;
@@ -625,12 +696,17 @@ public:
     if(init_){
       return false;
     }
+    if(s == 0){
+      s = 1;
+      size_ = 1;
+    }
     data = new T[s];
     if(data == nullptr){
       return false;
     }else{
       size_ = s;
       destroy = true;
+      init_ = true;
     }
     return true;
   }
@@ -642,19 +718,19 @@ public:
     std::cout << std::endl;
   }
 
-  T & at(long index){
+  T & at(long index) const {
     return data[index];
   }
 
-  T & operator[] (long index){
+  T & operator[] (long index) const {
     return data[index];
   }
 
-  size_t size(){
+  size_t size() const {
     return size_;
   }
 
-  size_t length(){
+  size_t length() const {
     return size_;
   }
 
