@@ -1,7 +1,7 @@
 #define DEBUG_
 #include "safe.hpp"
 
-#if (__cplusplus>=199711L)
+#if ((defined(_MSVC_LANG) && _MSVC_LANG >= 199711L) || __cplusplus>=199711L)
 void iterateI(arr_<int> &x, size_t i){
   x.alloc(100, __LINE__);
 }
@@ -20,7 +20,7 @@ void printALL(arr_<int> &x, size_t i){
 #endif
 
 int main(){
-#if (__cplusplus>=201103L)
+#if ((defined(_MSVC_LANG) && _MSVC_LANG >= 201103L) || __cplusplus>=201103L)
 
   arr_<arr_<int>> a(100, __LINE__);
   a.for_each([](arr_<int> &x, size_t i){
@@ -39,7 +39,7 @@ int main(){
     x.print();
   });
 
-#elif (__cplusplus>=199711L)
+#elif ((defined(_MSVC_LANG) && _MSVC_LANG >= 199711L) || __cplusplus>=199711L)
 
   arr_< arr_<int> > a(100, __LINE__);
   a.for_each(iterateI);
