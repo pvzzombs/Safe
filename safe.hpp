@@ -1,6 +1,6 @@
 #include <iostream>
 #include <exception>
-#if (__cplusplus>=201103L)
+#if ((defined(_MSVC_LANG) && _MSVC_LANG >= 201103L) || __cplusplus>=201103L)
 #include <initializer_list>
 #endif
 
@@ -8,7 +8,7 @@
 namespace safe {
 #endif
 
-#if (__cplusplus>=199711L)
+#if ((defined(_MSVC_LANG) && _MSVC_LANG >= 199711L) || __cplusplus>=199711L)
 #define nullptr NULL
 #endif
 
@@ -446,14 +446,14 @@ class arr_{
   bool init_;
   T * data;
 
-#if (__cplusplus>=201103L)
+#if ((defined(_MSVC_LANG) && _MSVC_LANG >= 201103L) || __cplusplus>=201103L)
   arr_ & operator= (arr_<T> &&) = delete;
 #endif
   template <class X> void swap_(X& a, X& b){
     X c(a); a=b; b=c;
   }
   void swap(arr_<T> & f, arr_<T> & l){
-#if (__cplusplus>=201103L)
+#if ((defined(_MSVC_LANG) && _MSVC_LANG >= 201103L) || __cplusplus>=201103L)
     std::swap(f.size_, l.size_);
     std::swap(f.destroy, l.destroy);
     std::swap(f.init_, l.init_);
@@ -483,7 +483,7 @@ public:
     std::cout << m_13 << line << std::endl;
 #endif
   }
-#if (__cplusplus>=201103L)
+#if ((defined(_MSVC_LANG) && _MSVC_LANG >= 201103L) || __cplusplus>=201103L)
   arr_(std::initializer_list<T> arr_list): size_(arr_list.size()), destroy(true), init_(true){
     if(size_ == 0){
       destroy = false;
@@ -525,7 +525,7 @@ public:
     swap(*this, t_);
     return *this;
   }
-#if (__cplusplus>=201103L)
+#if ((defined(_MSVC_LANG) && _MSVC_LANG >= 201103L) || __cplusplus>=201103L)
   arr_(arr_<T> && rhs_): size_(0), destroy(false), init_(false){
     data = nullptr;
     swap(*this, rhs_);
@@ -623,14 +623,14 @@ class arr_{
   bool init_;
   T * data;
 
-#if (__cplusplus>=201103L)
+#if ((defined(_MSVC_LANG) && _MSVC_LANG >= 201103L) || __cplusplus>=201103L)
   arr_ & operator= (arr_<T> &&) = delete;
 #endif
   template <class X> void swap_(X& a, X& b){
     X c(a); a=b; b=c;
   }
   void swap(arr_<T> & f, arr_<T> & l){
-#if (__cplusplus>=201103L)
+#if ((defined(_MSVC_LANG) && _MSVC_LANG >= 201103L) || __cplusplus>=201103L)
     std::swap(f.size_, l.size_);
     std::swap(f.destroy, l.destroy);
     std::swap(f.init_, l.init_);
@@ -650,7 +650,7 @@ public:
   arr_(size_t s, unsigned int line=0): size_(s), destroy(true), init_(true){
     data = new T[s];
   }
-#if (__cplusplus>=201103L)
+#if ((defined(_MSVC_LANG) && _MSVC_LANG >= 201103L) || __cplusplus>=201103L)
   arr_(std::initializer_list<T> arr_list): size_(arr_list.size()), destroy(true), init_(true){
     if(size_ == 0){
       destroy = false;
@@ -680,7 +680,7 @@ public:
     swap(*this, t_);
     return *this;
   }
-#if (__cplusplus>=201103L)
+#if ((defined(_MSVC_LANG) && _MSVC_LANG >= 201103L) || __cplusplus>=201103L)
   arr_(arr_<T> && rhs_): size_(0), destroy(false), init_(false){
     data = nullptr;
     swap(*this, rhs_);
