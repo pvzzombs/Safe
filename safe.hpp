@@ -1,5 +1,9 @@
+#ifndef PVZZOMBS_SAFE_HEADER
+#define PVZZOMBS_SAFE_HEADER
+
 #include <iostream>
 #include <exception>
+
 #if ((defined(_MSVC_LANG) && _MSVC_LANG >= 201103L) || __cplusplus>=201103L)
 #include <initializer_list>
 #endif
@@ -467,6 +471,15 @@ class arr_{
   }
 
 public:
+  T * _get_address(){
+    if(data == nullptr){
+#ifdef DEBUG_
+      std::cout << m_17 << std::endl;
+#endif
+      throw BMCRD_;
+    }
+    return data;
+  }
   arr_(): size_(0), destroy(false), init_(false){
     data = nullptr;
   }
@@ -644,6 +657,9 @@ class arr_{
   }
 
 public:
+  * _get_address(){
+    return data;
+  }
   arr_(): size_(0), destroy(false), init_(false){
     data = nullptr;
   }
@@ -747,4 +763,6 @@ public:
 
 #ifdef SAFE_USE_NAMESPACE
 };
+#endif
+
 #endif
