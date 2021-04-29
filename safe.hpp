@@ -81,7 +81,7 @@ public:
   bool add_address(T * addr_t){
     if(!HEAD_INIT){
       //newly used heap
-      HEAD = new heap_linked_list<T>(addr_t);
+      HEAD = new (std::nothrow) heap_linked_list<T>(addr_t);
       HEAD_INIT = true;
       //this  should always work
       TAIL = HEAD;
@@ -99,7 +99,7 @@ public:
       }
 
       //always work from right then left
-      TAIL->RIGHT = new heap_linked_list<T>(addr_t);
+      TAIL->RIGHT = new (std::nothrow) heap_linked_list<T>(addr_t);
       //point the tail rights to the previous tail
       //*T --> R
       //then
@@ -386,7 +386,7 @@ class bad_array_uninitialized_error_debug: public std::exception{
 template <typename T>
 T * new_(size_t size, mem_heap_debug<T> &heap_, int line=0){
   T * d = NULL;
-  d = new T[size];
+  d = new (std::nothrow) T[size];
   if(d == NULL || size == 0 || d == nullptr){
     throw BMARD_;
   }
@@ -424,7 +424,7 @@ void del_(T * block, mem_heap_debug<T> &heap_, int line=0){
 template <typename T>
 T * new_(size_t size, mem_heap_debug<T> &heap_, int line=0){
   T * d = NULL;
-  d = new T[size];
+  d = new (std::nothrow) T[size];
   if(d == NULL || size == 0 || d == nullptr){
     throw BMARD_;
   }
@@ -471,6 +471,24 @@ class arr_{
   }
 
 public:
+  bool _assert_null_equals_zero(){
+#if ((defined(_MSVC_LANG) && _MSVC_LANG >= 201103L) || __cplusplus>=201103L)
+    //note that we define nullptr to be NULL
+    //so were left checking with NULL == 0?
+    return nullptr == 0;
+#else
+    int * _test_ptr_here = NULL;
+    return _test_ptr_here == nullptr;
+#endif
+  }
+  bool _try_leak(){
+    T * a = nullptr;
+    a = new (std::nothrow) T;
+    if(a == nullptr){
+      return false;
+    }
+    return true;
+  }
   T * _get_address(){
     if(data == nullptr){
 #ifdef DEBUG_
@@ -480,6 +498,7 @@ public:
     }
     return data;
   }
+
   arr_(): size_(0), destroy(false), init_(false){
     data = nullptr;
   }
@@ -491,7 +510,7 @@ public:
       s = 1;
       size_ = 1;
     }
-    data = new T[s];
+    data = new (std::nothrow) T[s];
 #ifdef DEBUG_
     std::cout << m_13 << line << std::endl;
 #endif
@@ -505,7 +524,7 @@ public:
   std::cout << m_15 << std::endl;
 #endif
     }else{
-      data = new T[size_];
+      data = new (std::nothrow) T[size_];
       size_t i=0;
       for(const T & elem : arr_list){
         data[i] = elem;
@@ -525,7 +544,7 @@ public:
 #endif
       size_ = 1;
     }
-    data = new T[size_];
+    data = new (std::nothrow) T[size_];
     for(size_t i=0; i<size_; i++){
       data[i] = rhs_.at(i);
     }
@@ -564,7 +583,7 @@ public:
       s = 1;
       size_ = 1;
     }
-    data = new T[s];
+    data = new (std::nothrow) T[s];
     if(data == nullptr){
       return false;
     }else{
@@ -623,6 +642,45 @@ public:
     for(size_t i=0; i<size_; i++){
       fun(data[i], i);
     }
+  }
+
+  bool alloc2(size_t s, size_t o, unsigned int line=0){
+    bool ok_inner_arr;
+
+    if(init_){
+      return false;
+    }
+    if(s == 0){
+#ifdef DEBUG_
+      std::cout << m_18;
+#endif
+      s = 1;
+      size_ = 1;
+    }
+    if(o == 0){
+#ifdef DEBUG_
+      std::cout << m_18;
+#endif
+      o = 1;
+    }
+
+    data = new (std::nothrow) T[s];
+    if(data == nullptr){
+      return false;
+    }else{
+      for(size_t i=0; i<s; i++){
+        ok_inner_arr = data[i].alloc(o);
+        if(!ok_inner_arr){
+          delete [] data;
+          data = nullptr;
+          return false;
+        }
+      }
+      size_ = s;
+      destroy = true;
+      init_ = true;
+    }
+    return true;
   }
 
 };
@@ -657,14 +715,33 @@ class arr_{
   }
 
 public:
-  * _get_address(){
+  bool _assert_null_equals_zero(){
+#if ((defined(_MSVC_LANG) && _MSVC_LANG >= 201103L) || __cplusplus>=201103L)
+    //note that we define nullptr to be NULL
+    //so were left checking with NULL == 0?
+    return nullptr == 0;
+#else
+    int * _test_ptr_here = NULL;
+    return _test_ptr_here == nullptr;
+#endif
+  }
+  bool _try_leak(){
+    T * a = nullptr;
+    a = new (std::nothrow) T;
+    if(a == nullptr){
+      return false;
+    }
+    return true;
+  }
+  T * _get_address(){
     return data;
   }
+
   arr_(): size_(0), destroy(false), init_(false){
     data = nullptr;
   }
   arr_(size_t s, unsigned int line=0): size_(s), destroy(true), init_(true){
-    data = new T[s];
+    data = new (std::nothrow) T[s];
   }
 #if ((defined(_MSVC_LANG) && _MSVC_LANG >= 201103L) || __cplusplus>=201103L)
   arr_(std::initializer_list<T> arr_list): size_(arr_list.size()), destroy(true), init_(true){
@@ -672,7 +749,7 @@ public:
       destroy = false;
       init_ = false;
     }else{
-      data = new T[size_];
+      data = new (std::nothrow) T[size_];
       size_t i=0;
       for(const T & elem : arr_list){
         data[i] = elem;
@@ -686,7 +763,7 @@ public:
     if(rhs_.size() == 0){
       size_ = 1;
     }
-    data = new T[size_];
+    data = new (std::nothrow) T[size_];
     for(size_t i=0; i<size_; i++){
       data[i] = rhs_.at(i);
     }
@@ -716,7 +793,7 @@ public:
       s = 1;
       size_ = 1;
     }
-    data = new T[s];
+    data = new (std::nothrow) T[s];
     if(data == nullptr){
       return false;
     }else{
@@ -755,6 +832,39 @@ public:
     for(size_t i=0; i<size_; i++){
       fun(data[i], i);
     }
+  }
+
+  bool alloc2(size_t s, size_t o, unsigned int line=0){
+    bool ok_inner_arr;
+
+    if(init_){
+      return false;
+    }
+    if(s == 0){
+      s = 1;
+      size_ = 1;
+    }
+    if(o == 0){
+      o = 1;
+    }
+
+    data = new (std::nothrow) T[s];
+    if(data == nullptr){
+      return false;
+    }else{
+      for(size_t i=0; i<s; i++){
+        ok_inner_arr = data[i].alloc(o);
+        if(!ok_inner_arr){
+          delete [] data;
+          data = nullptr;
+          return false;
+        }
+      }
+      size_ = s;
+      destroy = true;
+      init_ = true;
+    }
+    return true;
   }
 
 };
