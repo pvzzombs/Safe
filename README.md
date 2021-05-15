@@ -1,5 +1,5 @@
 # Safe
-[![Build Status](https://img.shields.io/github/workflow/status/pvzzombs/Safe/CMake)](https://github.com/pvzzombs/Safe/actions) [![CircleCI](https://circleci.com/gh/pvzzombs/Safe.svg?style=svg)](https://circleci.com/gh/pvzzombs/Safe) [![Total alerts](https://img.shields.io/lgtm/alerts/g/pvzzombs/Safe.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/pvzzombs/Safe/alerts/) [![Total alerts](https://img.shields.io/lgtm/alerts/g/pvzzombs/Safe.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/pvzzombs/Safe/alerts/)  
+[![Build Status](https://img.shields.io/github/workflow/status/pvzzombs/Safe/CMake)](https://github.com/pvzzombs/Safe/actions) [![CircleCI](https://circleci.com/gh/pvzzombs/Safe.svg?style=svg)](https://circleci.com/gh/pvzzombs/Safe) [![Total alerts](https://img.shields.io/lgtm/alerts/g/pvzzombs/Safe.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/pvzzombs/Safe/alerts/)  
 My simple C++ header for detecting memory leaks and invalid array access. Supports C++03 and above.
 
 ## Get Started
