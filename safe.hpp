@@ -17,25 +17,25 @@ namespace safe {
 #endif
 
 // Constant strings
-const char * m_1 = "-- Found memory leak at ";
-const char * m_2 = ", releasing...\n";
-const char * m_3 = "Bad Memory Allocation";
-const char * m_4 = "Dangling Memory should not be released";
-const char * m_5 = "Array index is out of bounds";
-const char * m_6 = "-- Memory allocation: ";
-const char * m_7 = "-- Memory released: ";
-const char * m_8 = "-- There is a problem releasing memory!\n";
-const char * m_9 = "-- There is a problem allocating memory!\n";
-const char * m_10 = " at line ";
-const char * m_11 = " ~ at line ";
-const char * m_12 = " ~ size ";
-const char * m_13 = "-- New array at line ";
-const char * m_14 = "-- Array released...";
-const char * m_15 = "-- Array is empty";
-const char * m_16 = "-- Array index out of bounds : index ";
-const char * m_17 = "Array is not initialized";
-const char * m_18 = "-- Warning: An array with size 0 will be initialized with a size of 1\n";
-const char * m_19 = "-- Address found at ";
+const char * message_1 = "-- Found memory leak at ";
+const char * message_2 = ", releasing...\n";
+const char * message_3 = "Bad Memory Allocation";
+const char * message_4 = "Dangling Memory should not be released";
+const char * message_5 = "Array index is out of bounds";
+const char * message_6 = "-- Memory allocation: ";
+const char * message_7 = "-- Memory released: ";
+const char * message_8 = "-- There is a problem releasing memory!\n";
+const char * message_9 = "-- There is a problem allocating memory!\n";
+const char * message_10 = " at line ";
+const char * message_11 = " ~ at line ";
+const char * message_12 = " ~ size ";
+const char * message_13 = "-- New array at line ";
+const char * message_14 = "-- Array released...";
+const char * message_15 = "-- Array is empty";
+const char * message_16 = "-- Array index out of bounds : index ";
+const char * message_17 = "Array is not initialized";
+const char * message_18 = "-- Warning: An array with size 0 will be initialized with a size of 1\n";
+const char * message_19 = "-- Address found at ";
 
 #if defined(DEBUG_) || defined(SAFE_USE_FUNCTIONALITY)
 
@@ -243,7 +243,7 @@ public:
           //allocation of addr_t, we just
           //deleted this node so we know
           //that it no longer exists
-          //std::cout << m_7 << (void *)temp_->address_holder << m_11 << "\n";
+          //std::cout << message_7 << (void *)temp_->address_holder << message_11 << "\n";
           delete [] temp_->address_holder;
           delete temp_;
           return true;
@@ -266,7 +266,7 @@ public:
         while(!(temp_ == nullptr)){
           if( !(temp_->address_holder == nullptr) ){
 #ifdef DEBUG_
-            std::cout << m_1 << (void *)temp_->address_holder << m_2;
+            std::cout << message_1 << (void *)temp_->address_holder << message_2;
 #endif
             delete [] temp_->address_holder;
           }
@@ -307,7 +307,7 @@ public:
       while(!(temp_ == nullptr)){
         if( !(temp_->address_holder == nullptr) ){
 #ifdef DEBUG_
-          std::cout << m_1 << (void *)temp_->address_holder << m_2;
+          std::cout << message_1 << (void *)temp_->address_holder << message_2;
 #endif
           delete [] temp_->address_holder;
         }
@@ -360,25 +360,25 @@ public:
 
 class bad_memory_alloc_error_debug: public std::exception{
   virtual const char * what() const throw(){
-    return m_3;
+    return message_3;
   }
 } BMARD_;
 
 class bad_memory_release_error_debug: public std::exception{
   virtual const char * what() const throw(){
-    return m_4;
+    return message_4;
   }
 } BMRED_;
 
 class bad_memory_access_error_debug: public std::exception{
   virtual const char * what() const throw(){
-    return m_5;
+    return message_5;
   }
 } BMCRD_;
 
 class bad_array_uninitialized_error_debug: public std::exception{
   virtual const char * what() const throw(){
-    return m_17;
+    return message_17;
   }
 } BAUED_;
 
@@ -394,9 +394,9 @@ T * new_(size_t size, mem_heap_debug<T> &heap_, int line=0){
   bool result_ = heap_.add_address(d);
 #ifdef DEBUG_
   if(result_){
-    std::cout << m_6 << (void *)d << m_12 << size << m_10 << line << "\n";
+    std::cout << message_6 << (void *)d << message_12 << size << message_10 << line << "\n";
   }else{
-    std::cout << m_9;
+    std::cout << message_9;
   }
 #endif
   return d;
@@ -413,9 +413,9 @@ void del_(T * block, mem_heap_debug<T> &heap_, int line=0){
   if(result_){
     delete[] block;
 #ifdef DEBUG_
-    std::cout << m_7 << (void *)block << m_11 << line << "\n";
+    std::cout << message_7 << (void *)block << message_11 << line << "\n";
   }else{
-    std::cout << m_8;
+    std::cout << message_8;
 #endif
   }
 }
@@ -492,7 +492,7 @@ public:
   T * _get_address(){
     if(data == nullptr){
 #ifdef DEBUG_
-      std::cout << m_17 << std::endl;
+      std::cout << message_17 << std::endl;
 #endif
       throw BMCRD_;
     }
@@ -505,14 +505,14 @@ public:
   arr_(size_t s, unsigned int line=0): size_(s), destroy(true), init_(true){
     if(s == 0){
 #ifdef DEBUG_
-      std::cout << m_18;
+      std::cout << message_18;
 #endif
       s = 1;
       size_ = 1;
     }
     data = new (std::nothrow) T[s];
 #ifdef DEBUG_
-    std::cout << m_13 << line << std::endl;
+    std::cout << message_13 << line << std::endl;
 #endif
   }
 #if ((defined(_MSVC_LANG) && _MSVC_LANG >= 201103L) || __cplusplus>=201103L)
@@ -521,7 +521,7 @@ public:
       destroy = false;
       init_ = false;
 #ifdef DEBUG_
-  std::cout << m_15 << std::endl;
+  std::cout << message_15 << std::endl;
 #endif
     }else{
       data = new (std::nothrow) T[size_];
@@ -531,7 +531,7 @@ public:
         ++i;
       }
 #ifdef DEBUG_
-  std::cout << m_13 << std::endl;
+  std::cout << message_13 << std::endl;
 #endif
     }
   }
@@ -540,7 +540,7 @@ public:
     data = nullptr;
     if(rhs_.size() == 0){
 #ifdef DEBUG_
-      std::cout << m_18;
+      std::cout << message_18;
 #endif
       size_ = 1;
     }
@@ -549,7 +549,7 @@ public:
       data[i] = rhs_.at(i);
     }
 #ifdef DEBUG_
-    std::cout << m_13 << std::endl;
+    std::cout << message_13 << std::endl;
 #endif
   }
   arr_ & operator= (const arr_<T> & rhs_){
@@ -567,7 +567,7 @@ public:
     if(destroy){
       delete [] data;
 #ifdef DEBUG_
-      std::cout << m_14 << std::endl;
+      std::cout << message_14 << std::endl;
 #endif
     }
   }
@@ -578,7 +578,7 @@ public:
     }
     if(s == 0){
 #ifdef DEBUG_
-      std::cout << m_18;
+      std::cout << message_18;
 #endif
       s = 1;
       size_ = 1;
@@ -608,7 +608,7 @@ public:
     long t = (long)(size_-1);
     if(index < 0 || index > t){
 #ifdef DEBUG_
-      std::cout << m_16 << index << std::endl;
+      std::cout << message_16 << index << std::endl;
 #endif
       throw BMCRD_;
     }
@@ -622,7 +622,7 @@ public:
     long t = (long)(size_-1);
     if(index < 0 || index > t){
 #ifdef DEBUG_
-      std::cout << m_16 << index << std::endl;
+      std::cout << message_16 << index << std::endl;
 #endif
       throw BMCRD_;
     }
@@ -652,14 +652,14 @@ public:
     }
     if(s == 0){
 #ifdef DEBUG_
-      std::cout << m_18;
+      std::cout << message_18;
 #endif
       s = 1;
       size_ = 1;
     }
     if(o == 0){
 #ifdef DEBUG_
-      std::cout << m_18;
+      std::cout << message_18;
 #endif
       o = 1;
     }
