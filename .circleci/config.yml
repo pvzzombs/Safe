@@ -23,7 +23,7 @@ jobs:
           command: 'apt-get update && sudo apt-get install -y unzip'
       - run:
           name: Download Build Wrapper for SonarScanner
-          command: 'curl -0l http://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip'
+          command: 'curl http://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip --output build-wrapper-linux-x86.zip'
       - run:
           name: Unzip the Build Wrapper
           command: 'unzip -qq -o build-wrapper-linux-x86.zip -d build_wrapper_executable_folder'
