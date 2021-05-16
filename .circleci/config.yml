@@ -28,7 +28,7 @@ jobs:
           name: Creating Binary Files
           command: 'cmake --build build'
       - run:
-          name: Point Unit Testing
+          name: CMAKE Testing
           command: 'cd build && ctest'
       - sonarcloud/scan
 
