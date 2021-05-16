@@ -19,6 +19,9 @@ jobs:
           name: Install Curl
           command: 'apt-get update && sudo apt-get install -y curl'
       - run:
+          name: Install Unzip
+          command: 'apt-get update && sudo apt-get install -y unzip'
+      - run:
           name: Creating Build Files
           command: 'cmake -H. -Bbuild'
       - run:
