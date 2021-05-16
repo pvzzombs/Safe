@@ -32,7 +32,7 @@ jobs:
           command: 'cmake -H. -Bbuild'
       - run:
           name: Creating Binary Files and Executing Build Wrapper
-          command: './build_wrapper_executable_folder/build-wrapper-linux-x86-64 --out-dir build_wrapper_output_directory cmake --build build'
+          command: './build_wrapper_executable_folder/build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir build_wrapper_output_directory cmake --build build'
       - run:
           name: CMAKE Testing
           command: 'cd build && ctest'
