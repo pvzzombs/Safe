@@ -25,11 +25,12 @@ jobs:
           name: Creating Build Files
           command: 'cmake -H. -Bbuild'
       - run:
-          name: Creating Binary Files
-          command: 'cmake --build build'
+          name: Creating Binary Files and Executing Build Wrapper
+          command: 'build-wrapper-linux-x86-64 --out-dir build_wrapper_output_directory cmake --build build'
       - run:
           name: CMAKE Testing
           command: 'cd build && ctest'
+          
       - sonarcloud/scan
 
 orbs:
