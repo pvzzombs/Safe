@@ -45,8 +45,8 @@ is not a real memory heap. This only acts as a memory manager. The operating sys
 the one who allocates memory for us. Then we replace ``new int[10]`` with ``new_<int>(10, gb)``. That's it!  
 Now compile the code. This should work and you will be able to see its output like this:  
 ```
-Allocation: 0x1d9260 ~ Memory Allocation ~ size 10 at line 0
-Found memory leak at 0x1d9260, releasing...
+-- Memory allocation: 0x1d9260 ~ size 10 at line 0
+-- Found memory leak at 0x1d9260, releasing...
 ```  
 We can see the output that it log. The first line is the allocation. This is very helpful if you want  
 to know where is the allocation happened.  The last line tells us that there is a leak. Simple, right?  
@@ -65,8 +65,8 @@ int main(){
 ```  
 Compile again and done! New output will look like:  
 ```
-Allocation: 0x1d9260 ~ Memory Allocation ~ size 10 at line 5
-Found memory leak at 0x1d9260, releasing...
+-- Memory allocation: 0x1d9260 ~ size 10 at line 5
+-- Found memory leak at 0x1d9260, releasing...
 ```  
 How do I ``delete[]`` the memory manually? You can do that by ``del_<int>(a, gb)``. 
 Now change your code to this:  
@@ -82,8 +82,8 @@ int main(){
 ```  
 Compile and run!  
 ```
-Allocation: 0x189260 ~ Memory Allocation ~ size 10 at line 5
-Allocation: 0x189260 ~ Memory Released ~ at line 0
+-- Memory allocation: 0x189260 ~ size 10 at line 5
+-- Memory released: 0x189260 ~ at line 0
 ```  
 As you can see, there is no ``memory leaks`` in the output. But there is still a problem.  
 The second line says ``~ at line 0`` which is wrong, but this is the default behaviour.
@@ -100,8 +100,8 @@ int main(){
 ```  
 Compile and run!!!  
 ```
-Allocation: 0x1289260 ~ Memory Allocation ~ size 10 at line 5
-Allocation: 0x1289260 ~ Memory Released ~ at line 6
+-- Memory allocation: 0x1289260 ~ size 10 at line 5
+-- Memory released: 0x1289260 ~ at line 6
 ```  
 As you can see the problem was fixed, problem solved!
 Also, here are some pointers to remember.  
