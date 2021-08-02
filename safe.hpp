@@ -36,6 +36,12 @@ const char * message_16 = "-- Array index out of bounds : index ";
 const char * message_17 = "Array is not initialized";
 const char * message_18 = "-- Warning: An array with size 0 will be initialized with a size of 1\n";
 const char * message_19 = "-- Address found at ";
+const char * message_20 = "-- Copy constructor called";
+const char * message_21 = "-- Move constructor called";
+const char * message_22 = "-- Copy assignment called";
+const char * message_23 = "-- Move assignment called";
+const char * message_24 = "-- std::initializer_list constructor called";
+const char * message_25 = "-- std::initializer_list assignment called";
 
 #if defined(DEBUG_) || defined(SAFE_USE_FUNCTIONALITY)
 
@@ -450,9 +456,6 @@ class arr_{
   bool init_;
   T * data;
 
-#if ((defined(_MSVC_LANG) && _MSVC_LANG >= 201103L) || __cplusplus>=201103L)
-  arr_ & operator= (arr_<T> &&) = delete;
-#endif
   template <class X> void swap_(X& a, X& b){
     X c(a); a=b; b=c;
   }
@@ -499,9 +502,12 @@ public:
     return data;
   }
 
+/////////////////////////////
   arr_(): size_(0), destroy(false), init_(false){
     data = nullptr;
   }
+/////////////////////////////
+/////////////////////////////
   arr_(size_t s, unsigned int line=0): size_(s), destroy(true), init_(true){
     if(s == 0){
 #ifdef DEBUG_
@@ -515,8 +521,13 @@ public:
     std::cout << message_13 << line << std::endl;
 #endif
   }
+/////////////////////////////
+/////////////////////////////
 #if ((defined(_MSVC_LANG) && _MSVC_LANG >= 201103L) || __cplusplus>=201103L)
   arr_(std::initializer_list<T> arr_list): size_(arr_list.size()), destroy(true), init_(true){
+#ifdef DEBUG_
+  std::cout << message_24 << std::endl;
+#endif
     if(size_ == 0){
       destroy = false;
       init_ = false;
@@ -536,7 +547,53 @@ public:
     }
   }
 #endif
+/////////////////////////////
+/////////////////////////////
+#if ((defined(_MSVC_LANG) && _MSVC_LANG >= 201103L) || __cplusplus>=201103L)
+  arr_ & operator= (std::initializer_list<T> arr_list){
+#ifdef DEBUG_
+  std::cout << message_25 << std::endl;
+#endif
+    size_t prev_size_ = size_;
+    size_ = arr_list.size();
+    destroy = true;
+    init_ = true;
+
+    if(size_ == 0){
+      destroy = false;
+      init_ = false;
+#ifdef DEBUG_
+  std::cout << message_15 << std::endl;
+#endif
+    }else{
+      //check if data is valid
+      if(data != nullptr){
+        //if the previous data size is big enough, we will use it
+        //else destroy it
+        if(prev_size_ < size_){
+          delete [] data;
+          data = new (std::nothrow) T[size_];
+        }
+      }
+      
+      size_t i=0;
+      for(const T & elem : arr_list){
+        data[i] = elem;
+        ++i;
+      }
+#ifdef DEBUG_
+  std::cout << message_13 << std::endl;
+#endif
+    }
+    return *this;
+  }
+#endif
+/////////////////////////////
+/////////////////////////////
   arr_(const arr_<T> & rhs_): size_(rhs_.size()), destroy(true), init_(true){
+#ifdef DEBUG_
+      std::cout << message_20 << std::endl;
+#endif
     data = nullptr;
     if(rhs_.size() == 0){
 #ifdef DEBUG_
@@ -552,17 +609,41 @@ public:
     std::cout << message_13 << std::endl;
 #endif
   }
+/////////////////////////////
+/////////////////////////////
   arr_ & operator= (const arr_<T> & rhs_){
+#ifdef DEBUG_
+    std::cout << message_22 << std::endl;
+#endif
     arr_<T> t_(rhs_);
     swap(*this, t_);
     return *this;
   }
+/////////////////////////////
+/////////////////////////////
 #if ((defined(_MSVC_LANG) && _MSVC_LANG >= 201103L) || __cplusplus>=201103L)
   arr_(arr_<T> && rhs_): size_(0), destroy(false), init_(false){
+#ifdef DEBUG_
+    std::cout << message_21 << std::endl;
+#endif
     data = nullptr;
     swap(*this, rhs_);
   }
 #endif
+/////////////////////////////
+/////////////////////////////
+#if ((defined(_MSVC_LANG) && _MSVC_LANG >= 201103L) || __cplusplus>=201103L)
+  arr_ & operator= (arr_<T> && rhs_){
+#ifdef DEBUG_
+    std::cout << message_23 << std::endl;
+#endif
+    data = nullptr;
+    swap(*this, rhs_);
+    return *this;
+  }
+#endif
+/////////////////////////////
+/////////////////////////////
   ~arr_(){
     if(destroy){
       delete [] data;
@@ -571,6 +652,7 @@ public:
 #endif
     }
   }
+/////////////////////////////
 
   bool alloc(size_t s, unsigned int line=0){
     if(init_){
@@ -694,9 +776,6 @@ class arr_{
   bool init_;
   T * data;
 
-#if ((defined(_MSVC_LANG) && _MSVC_LANG >= 201103L) || __cplusplus>=201103L)
-  arr_ & operator= (arr_<T> &&) = delete;
-#endif
   template <class X> void swap_(X& a, X& b){
     X c(a); a=b; b=c;
   }
@@ -737,12 +816,17 @@ public:
     return data;
   }
 
+/////////////////////////////
   arr_(): size_(0), destroy(false), init_(false){
     data = nullptr;
   }
+/////////////////////////////
+/////////////////////////////
   arr_(size_t s, unsigned int line=0): size_(s), destroy(true), init_(true){
     data = new (std::nothrow) T[s];
   }
+/////////////////////////////
+/////////////////////////////
 #if ((defined(_MSVC_LANG) && _MSVC_LANG >= 201103L) || __cplusplus>=201103L)
   arr_(std::initializer_list<T> arr_list): size_(arr_list.size()), destroy(true), init_(true){
     if(size_ == 0){
@@ -758,6 +842,40 @@ public:
     }
   }
 #endif
+/////////////////////////////
+/////////////////////////////
+#if ((defined(_MSVC_LANG) && _MSVC_LANG >= 201103L) || __cplusplus>=201103L)
+  arr_ & operator= (std::initializer_list<T> arr_list){
+    size_t prev_size_ = size_;
+    size_ = arr_list.size();
+    destroy = true;
+    init_ = true;
+
+    if(size_ == 0){
+      destroy = false;
+      init_ = false;
+    }else{
+      //check if data is valid
+      if(data != nullptr){
+        //if the previous data size is big enough, we will use it
+        //else destroy it
+        if(prev_size_ < size_){
+          delete [] data;
+          data = new (std::nothrow) T[size_];
+        }
+      }
+      
+      size_t i=0;
+      for(const T & elem : arr_list){
+        data[i] = elem;
+        ++i;
+      }
+    }
+    return *this;
+  }
+#endif
+/////////////////////////////
+/////////////////////////////
   arr_(const arr_<T> & rhs_): size_(rhs_.size()), destroy(true), init_(true){
     data = nullptr;
     if(rhs_.size() == 0){
@@ -768,22 +886,37 @@ public:
       data[i] = rhs_.at(i);
     }
   }
+/////////////////////////////
+/////////////////////////////
   arr_ & operator= (const arr_<T> & rhs_){
     arr_<T> t_(rhs_);
     swap(*this, t_);
     return *this;
   }
+/////////////////////////////
+/////////////////////////////
 #if ((defined(_MSVC_LANG) && _MSVC_LANG >= 201103L) || __cplusplus>=201103L)
   arr_(arr_<T> && rhs_): size_(0), destroy(false), init_(false){
     data = nullptr;
     swap(*this, rhs_);
   }
 #endif
+/////////////////////////////
+/////////////////////////////
+#if ((defined(_MSVC_LANG) && _MSVC_LANG >= 201103L) || __cplusplus>=201103L)
+  arr_ & operator= (arr_<T> && rhs_){
+    data = nullptr;
+    swap(*this, rhs_);
+  }
+#endif
+/////////////////////////////
+/////////////////////////////
   ~arr_(){
     if(destroy){
       delete [] data;
     }
   }
+/////////////////////////////
 
   bool alloc(size_t s, unsigned int line=0){
     if(init_){

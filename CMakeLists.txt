@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.1)
 
+set (CMAKE_BUILD_TYPE Debug FORCE)
+
 project(HEAP CXX)
 
 if ( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MINGW")
