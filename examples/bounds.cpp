@@ -22,10 +22,8 @@ void p(int &x, size_t i){
 
 int main(){
 #if ((defined(_MSVC_LANG) && _MSVC_LANG >= 201103L) || __cplusplus>=201103L)
-  arr_<arr_<int>> a(4, __LINE__);
-  a.for_each([](arr_<int>& x, size_t i){
-    x.alloc(4, __LINE__);
-  });
+  arr_<arr_<int>> a;
+  a.alloc2(4, 4, __LINE__);
 
   a.for_each([](arr_<int>& x, size_t i){
     x.for_each([](int &y, size_t j){

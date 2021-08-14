@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <exception>
+#include <new>
 
 #if ((defined(_MSVC_LANG) && _MSVC_LANG >= 201103L) || __cplusplus>=201103L)
 #include <initializer_list>
@@ -12,7 +13,7 @@
 namespace safe {
 #endif
 
-#if ((defined(_MSVC_LANG) && _MSVC_LANG >= 199711L) || __cplusplus>=199711L)
+#if ((defined(_MSVC_LANG) && _MSVC_LANG >= 199711L && _MSVC_LANG<201103L) || (__cplusplus>=199711L && __cplusplus<201103L))
 #define nullptr NULL
 #endif
 
@@ -42,24 +43,22 @@ const char * message_22 = "-- Copy assignment called";
 const char * message_23 = "-- Move assignment called";
 const char * message_24 = "-- std::initializer_list constructor called";
 const char * message_25 = "-- std::initializer_list assignment called";
+const char * message_26 = "-- (Memory Heap) An existing address found in heap, ignoring duplicate...\n";
 
 #if defined(DEBUG_) || defined(SAFE_USE_FUNCTIONALITY)
 
 template <typename T>
 class heap_linked_list{
 public:
-  heap_linked_list * LEFT;
   heap_linked_list * RIGHT;
   T * address_holder;
 
   heap_linked_list(){
-    LEFT = nullptr;
     RIGHT = nullptr;
     address_holder = nullptr;
   }
 
   heap_linked_list(T * addr_t){
-    LEFT = nullptr;
     RIGHT = nullptr;
     address_holder = addr_t;
   }
@@ -70,18 +69,33 @@ template <typename T>
 class mem_heap_debug{
 private:
   heap_linked_list<T> * HEAD;
-  heap_linked_list<T> * TAIL;
   bool HEAD_INIT;
-  bool TAIL_INIT;
   bool destroyed_;
 
 public:
   mem_heap_debug(){
     destroyed_ = false;
     HEAD_INIT = false;
-    TAIL_INIT = false;
     HEAD = nullptr;
-    TAIL = nullptr;
+  }
+
+  T * operator[] (size_t index) const {
+    size_t counter_ = 0;
+    if(HEAD_INIT){
+      heap_linked_list<T> * temp_ = HEAD;
+      while(!(temp_ == nullptr)){
+        if(index == counter_){
+          return temp_->address_holder;
+        }
+        if(!(temp_->RIGHT == nullptr)){
+          temp_ = temp_->RIGHT;
+          ++counter_;
+        }else{
+          break;
+        }
+      }
+    }
+    return nullptr;
   }
 
   bool add_address(T * addr_t){
@@ -89,12 +103,13 @@ public:
       //newly used heap
       HEAD = new (std::nothrow) heap_linked_list<T>(addr_t);
       HEAD_INIT = true;
-      //this  should always work
-      TAIL = HEAD;
     }else{
       heap_linked_list<T> * temp_ = HEAD;
       while(!(temp_ == nullptr)){
         if(temp_->address_holder == addr_t){
+#ifdef DEBUG_
+          std::cout << message_26;
+#endif
           return false;
         }
         if(!(temp_->RIGHT == nullptr)){
@@ -104,72 +119,45 @@ public:
         }
       }
 
+      heap_linked_list<T> * TAIL = temp_;
       //always work from right then left
-      TAIL->RIGHT = new (std::nothrow) heap_linked_list<T>(addr_t);
-      //point the tail rights to the previous tail
-      //*T --> R
-      //then
-      //T <-- *R
-      TAIL->RIGHT->LEFT = TAIL;
-
-      //now the more fun stuff
-      //T = R
-      TAIL = TAIL->RIGHT;
-      if(!TAIL_INIT){
-        TAIL_INIT = true;
+      TAIL->RIGHT = new heap_linked_list<T>(addr_t);
+      std::cout << (void *)TAIL->RIGHT << std::endl;
+      if (TAIL->RIGHT == nullptr) {
+        throw;
+        std::cout << message_9 << std::flush;
       }
     }
     return true;
   }
 
-  bool remove_address(T * addr_t){
+  bool remove_address(T * addr_t, bool preserve_ = false){
     if(HEAD_INIT){
-
-      heap_linked_list<T> * temp_ = HEAD;
-      bool has_left, has_right;
+      heap_linked_list<T> * temp_ = HEAD, * prev_ = nullptr;
+      bool has_right, has_left;
       while(!(temp_ == nullptr)){
-        has_left = false; has_right = false;
+        has_right = false; has_left = false;
         if(temp_->address_holder == addr_t){
-          //if the current node is the one
-          //that has the address we want to find:
-          //check whether it has a left node
-          if( !(temp_->LEFT == nullptr) )
-            has_left = true;
+          if(preserve_){
+            temp_->address_holder = nullptr;
+            return true;
+          }
 
           if( !(temp_->RIGHT == nullptr) )
             has_right = true;
 
-          if( has_left && has_right ){
-            //detach itself
-            // L = M = R
-            // L _ M - R
-            // L _ R - M
-            // L = R - M
-            // L = R (x M)
+          if( !(prev_ == nullptr) )
+            has_left = true;
 
-            temp_->LEFT->RIGHT = temp_->RIGHT;
-            temp_->RIGHT->LEFT = temp_->LEFT;
+          if( has_left && has_right ){
+
+            prev_->RIGHT = temp_->RIGHT;
           }else if( has_right && !has_left ){
             //we need to replace the head ofcourse
-            temp_->RIGHT->LEFT = nullptr;
             HEAD = temp_->RIGHT;
-            //check if the new head has no longer node
-            //if it is, then it means it is the tail
-            //we remove the bool TAIL_INT
-            if(HEAD->RIGHT == nullptr){
-              TAIL = HEAD;
-              TAIL_INIT = false;
-            }
           }else if( has_left && !has_right ){
-            temp_->LEFT->RIGHT = nullptr;
-            //check if the left node of the tail
-            //contains another left node
-            //if nott, then there is only one node
-            //existing and it is the head
-            if(temp_->LEFT->LEFT == nullptr){
-              TAIL = HEAD;
-              TAIL_INIT = false;
-            }
+            
+            prev_->RIGHT = nullptr;
           }else{
             //this the head
             HEAD_INIT = false;
@@ -183,6 +171,7 @@ public:
           return true;
         }
         if(!(temp_->RIGHT == nullptr)){
+          prev_ = temp_;
           temp_ = temp_->RIGHT;
         }else{
           return false;
@@ -192,69 +181,46 @@ public:
     return false;
   }
 
-  bool free_address(T * addr_t){
+  bool free_address(T * addr_t, bool preserve_ = false){
     if(HEAD_INIT){
-
-      heap_linked_list<T> * temp_ = HEAD;
-      bool has_left, has_right;
+      heap_linked_list<T> * temp_ = HEAD, * prev_ = nullptr;
+      bool has_right, has_left;
       while(!(temp_ == nullptr)){
-        has_left = false; has_right = false;
+        has_right = false; has_left = false;
         if(temp_->address_holder == addr_t){
-          //if the current node is the one
-          //that has the address we want to find:
-          //check whether it has a left node
-          if( !(temp_->LEFT == nullptr) )
-            has_left = true;
+          if(preserve_){
+            delete [] temp_->address_holder;
+            temp_->address_holder = nullptr;
+            return true;
+          }
 
           if( !(temp_->RIGHT == nullptr) )
             has_right = true;
 
-          if( has_left && has_right ){
-            //detach itself
-            // L = M = R
-            // L _ M - R
-            // L _ R - M
-            // L = R - M
-            // L = R (x M)
+          if( !(prev_ == nullptr) )
+            has_left = true;
 
-            temp_->LEFT->RIGHT = temp_->RIGHT;
-            temp_->RIGHT->LEFT = temp_->LEFT;
+          if( has_left && has_right ){
+
+            prev_->RIGHT = temp_->RIGHT;
           }else if( has_right && !has_left ){
             //we need to replace the head ofcourse
-            temp_->RIGHT->LEFT = nullptr;
             HEAD = temp_->RIGHT;
-            //check if the new head has no longer node
-            //if it is, then it means it is the tail
-            //we remove the bool TAIL_INT
-            if(HEAD->RIGHT == nullptr){
-              TAIL = HEAD;
-              TAIL_INIT = false;
-            }
           }else if( has_left && !has_right ){
-            temp_->LEFT->RIGHT = nullptr;
-            //check if the left node of the tail
-            //contains another left node
-            //if nott, then there is only one node
-            //existing and it is the head
-            if(temp_->LEFT->LEFT == nullptr){
-              TAIL = HEAD;
-              TAIL_INIT = false;
-            }
+            
+            prev_->RIGHT = nullptr;
           }else{
             //this the head
             HEAD_INIT = false;
           }
 
-          //note that we did not deleted the
-          //allocation of addr_t, we just
-          //deleted this node so we know
-          //that it no longer exists
-          //std::cout << message_7 << (void *)temp_->address_holder << message_11 << "\n";
           delete [] temp_->address_holder;
+          temp_->address_holder = nullptr;
           delete temp_;
           return true;
         }
         if(!(temp_->RIGHT == nullptr)){
+          prev_ = temp_;
           temp_ = temp_->RIGHT;
         }else{
           return false;
@@ -268,7 +234,7 @@ public:
     if(!destroyed_){
       if(HEAD_INIT){
         //we delete everything
-        heap_linked_list<T> * temp_ = HEAD;
+        heap_linked_list<T> * temp_ = HEAD, * prev_ = nullptr;
         while(!(temp_ == nullptr)){
           if( !(temp_->address_holder == nullptr) ){
 #ifdef DEBUG_
@@ -277,8 +243,9 @@ public:
             delete [] temp_->address_holder;
           }
           if(!(temp_->RIGHT == nullptr)){
+            prev_ = temp_;
             temp_ = temp_->RIGHT;
-            delete temp_->LEFT;
+            delete prev_;
           }else{
             delete temp_;
             break;
@@ -309,7 +276,7 @@ public:
   void free_address(){
     if(HEAD_INIT){
       //we delete everything
-      heap_linked_list<T> * temp_ = HEAD;
+      heap_linked_list<T> * temp_ = HEAD, * prev_ = nullptr;
       while(!(temp_ == nullptr)){
         if( !(temp_->address_holder == nullptr) ){
 #ifdef DEBUG_
@@ -318,8 +285,29 @@ public:
           delete [] temp_->address_holder;
         }
         if(!(temp_->RIGHT == nullptr)){
+          prev_ = temp_;
           temp_ = temp_->RIGHT;
-          delete temp_->LEFT;
+          delete prev_;
+        }else{
+          delete temp_;
+          break;
+        }
+      }
+    }
+    HEAD_INIT = false;
+  }
+
+  void delete_list(){
+    if(HEAD_INIT){
+      //we delete the list
+      //address inside address holder
+      //are leave untouched
+      heap_linked_list<T> * temp_ = HEAD, * prev_ = nullptr;
+      while(!(temp_ == nullptr)){
+        if(!(temp_->RIGHT == nullptr)){
+          prev_ = temp_;
+          temp_ = temp_->RIGHT;
+          delete prev_;
         }else{
           delete temp_;
           break;
@@ -474,16 +462,6 @@ class arr_{
   }
 
 public:
-  bool _assert_null_equals_zero(){
-#if ((defined(_MSVC_LANG) && _MSVC_LANG >= 201103L) || __cplusplus>=201103L)
-    //note that we define nullptr to be NULL
-    //so were left checking with NULL == 0?
-    return nullptr == 0;
-#else
-    int * _test_ptr_here = NULL;
-    return _test_ptr_here == nullptr;
-#endif
-  }
   bool _try_leak(){
     T * a = nullptr;
     a = new (std::nothrow) T;
@@ -794,16 +772,6 @@ class arr_{
   }
 
 public:
-  bool _assert_null_equals_zero(){
-#if ((defined(_MSVC_LANG) && _MSVC_LANG >= 201103L) || __cplusplus>=201103L)
-    //note that we define nullptr to be NULL
-    //so were left checking with NULL == 0?
-    return nullptr == 0;
-#else
-    int * _test_ptr_here = NULL;
-    return _test_ptr_here == nullptr;
-#endif
-  }
   bool _try_leak(){
     T * a = nullptr;
     a = new (std::nothrow) T;

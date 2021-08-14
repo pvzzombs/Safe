@@ -15,35 +15,35 @@ jobs:
       - run:
           name: Install CMAKE
           command: 'apt-get update && sudo apt-get install -y cmake'
-      - run:
-          name: Install Curl
-          command: 'apt-get update && sudo apt-get install -y curl'
-      - run:
-          name: Install Unzip
-          command: 'apt-get update && sudo apt-get install -y unzip'
-      - run:
-          name: Download Build Wrapper for SonarScanner
-          command: 'curl https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip --output build-wrapper-linux-x86.zip'
-      - run:
-          name: Unzip the Build Wrapper
-          command: 'unzip -o build-wrapper-linux-x86.zip -d build_wrapper_executable_folder'
+    #   - run:
+    #       name: Install Curl
+    #       command: 'apt-get update && sudo apt-get install -y curl'
+    #   - run:
+    #       name: Install Unzip
+    #       command: 'apt-get update && sudo apt-get install -y unzip'
+    #   - run:
+    #       name: Download Build Wrapper for SonarScanner
+    #       command: 'curl https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip --output build-wrapper-linux-x86.zip'
+    #   - run:
+    #       name: Unzip the Build Wrapper
+    #       command: 'unzip -o build-wrapper-linux-x86.zip -d build_wrapper_executable_folder'
       - run:
           name: Creating Build Files
-          command: 'cmake -H. -Bbuild'
+          command: 'cmake -H . -B build'
       - run:
-          name: Creating Binary Files and Executing Build Wrapper
-          command: './build_wrapper_executable_folder/build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir build_wrapper_output_directory cmake --build build'
+          name: Creating Binary Files
+          command: 'cmake --build build'
       - run:
           name: CMAKE Testing
           command: 'cd build && ctest'
           
-      - sonarcloud/scan
+    #   - sonarcloud/scan
 
-orbs:
-  sonarcloud: sonarsource/sonarcloud@1.0.1
+# orbs:
+#   sonarcloud: sonarsource/sonarcloud@1.0.1
 
-workflows:
-  main:
-    jobs:
-      - build:
-          context: SonarCloud
+# workflows:
+#   main:
+#     jobs:
+#       - build:
+#           context: SonarCloud
