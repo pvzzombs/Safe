@@ -26,7 +26,7 @@ add_executable ( BOUNDS examples/bounds.cpp ${SAFE_HEADER} )
 
 add_executable ( DEMO examples/demo.cpp ${SAFE_HEADER} )
 
-add_executable ( TEST_1 unit_test/mem_heap_test.cpp ${SAFE_HEADER} )
+add_executable ( TEST_1 test/mem_heap_test.cpp ${SAFE_HEADER} )
 
 enable_testing()
 

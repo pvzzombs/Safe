@@ -29,7 +29,7 @@ jobs:
     #       command: 'unzip -o build-wrapper-linux-x86.zip -d build_wrapper_executable_folder'
       - run:
           name: Creating Build Files
-          command: 'cmake -H . -B build'
+          command: 'cmake -H. -Bbuild'
       - run:
           name: Creating Binary Files
           command: 'cmake --build build'

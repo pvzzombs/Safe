@@ -3,10 +3,14 @@
 My simple C++ header for detecting memory leaks and invalid array access. Supports C++03 and above.
 
 ## Get Started
+### Requirements:
+* Any compiler that supports ``C++ 03`` standard and above.
+* Note that it is recommended to use ``C++ 11`` standard and above, due to that it allows better
+
+### Adding safe.hpp in your project
 1. Get the ``safe.hpp`` in this repository either by cloning this or downloading the zip/tar.gz file.
 2. Include ``safe.hpp`` to your project
-
-That's it!!!
+3. That's it!!!
 
 ### How to use
 1. By default, ``safe.hpp`` is non-verbose, and is in Release mode.  
@@ -148,7 +152,8 @@ terminate called after throwing an instance of 'bad_memory_access_error_debug'
 
 What we did is just replaced ``int a[10]`` with ``arr_<int> a(10, __LINE__)``. Nice and easy!  
 
-#### More example:
+#### An example:
+##### Note: Check the folder named 'examples' for how to use it.
 
 ```
 #define DEBUG_
@@ -177,16 +182,12 @@ int main(){
 
 
 # LICENSE
-MIT
+MIT License
 
-
-
-
-
-
-
-
-
-
-
-
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
