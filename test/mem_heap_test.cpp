@@ -12,9 +12,9 @@ const char * title_2 = " ms. \n";
 const char * title_3 = "Passed.\n";
 const char * title_4 = "Failed.\n";
 
-#define PASSED title_3
-#define FAILED title_4
-#define TEST_IF(msg, lhs, rhs) std::cout<<msg<<' '<<((lhs==rhs)?PASSED:FAILED);
+#define PASSED_MACRO title_3
+#define FAILED_MACRO title_4
+#define TEST_IF(msg, lhs, rhs) std::cout<<msg<<' '<<((lhs==rhs)?PASSED_MACRO:FAILED_MACRO);
 
 int main(){
   plf::nanotimer timer;

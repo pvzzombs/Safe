@@ -5,7 +5,7 @@ My simple C++ header for detecting memory leaks and invalid array access. Suppor
 ## Get Started
 ### Requirements:
 * Any compiler that supports ``C++ 03`` standard and above.
-* Note that it is recommended to use ``C++ 11`` standard and above, due to that it allows better
+* Note that it is recommended to use ``C++ 11`` standard and above
 
 ### Adding safe.hpp in your project
 1. Get the ``safe.hpp`` in this repository either by cloning this or downloading the zip/tar.gz file.

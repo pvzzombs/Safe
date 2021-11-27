@@ -44,8 +44,7 @@ const char * message_23 = "-- Move assignment called";
 const char * message_24 = "-- std::initializer_list constructor called";
 const char * message_25 = "-- std::initializer_list assignment called";
 const char * message_26 = "-- (Memory Heap) An existing address found in heap, ignoring duplicate...\n";
-
-#if defined(DEBUG_) || defined(SAFE_USE_FUNCTIONALITY)
+const char * message_27 = "@@ Cannot allocate memory for memory_heap_debug!";
 
 template <typename T>
 class heap_linked_list{
@@ -102,6 +101,10 @@ public:
     if(!HEAD_INIT){
       //newly used heap
       HEAD = new (std::nothrow) heap_linked_list<T>(addr_t);
+      if(HEAD == nullptr){
+        std::cout << message_27 << std::endl;
+        return false;
+      }
       HEAD_INIT = true;
     }else{
       heap_linked_list<T> * temp_ = HEAD;
@@ -121,28 +124,24 @@ public:
 
       heap_linked_list<T> * TAIL = temp_;
       //always work from right then left
-      TAIL->RIGHT = new heap_linked_list<T>(addr_t);
-      std::cout << (void *)TAIL->RIGHT << std::endl;
+      TAIL->RIGHT = new (std::nothrow) heap_linked_list<T>(addr_t);
+      //std::cout << (void *)TAIL->RIGHT << std::endl;
       if (TAIL->RIGHT == nullptr) {
-        throw;
-        std::cout << message_9 << std::flush;
+        std::cout << message_27 << std::endl;
+        return false;
       }
     }
     return true;
   }
 
-  bool remove_address(T * addr_t, bool preserve_ = false){
+  // remove the node 
+  bool remove_address(T * addr_t){
     if(HEAD_INIT){
       heap_linked_list<T> * temp_ = HEAD, * prev_ = nullptr;
       bool has_right, has_left;
       while(!(temp_ == nullptr)){
         has_right = false; has_left = false;
         if(temp_->address_holder == addr_t){
-          if(preserve_){
-            temp_->address_holder = nullptr;
-            return true;
-          }
-
           if( !(temp_->RIGHT == nullptr) )
             has_right = true;
 
@@ -181,6 +180,7 @@ public:
     return false;
   }
 
+  //delete or free the address holder and remove the node
   bool free_address(T * addr_t, bool preserve_ = false){
     if(HEAD_INIT){
       heap_linked_list<T> * temp_ = HEAD, * prev_ = nullptr;
@@ -188,12 +188,6 @@ public:
       while(!(temp_ == nullptr)){
         has_right = false; has_left = false;
         if(temp_->address_holder == addr_t){
-          if(preserve_){
-            delete [] temp_->address_holder;
-            temp_->address_holder = nullptr;
-            return true;
-          }
-
           if( !(temp_->RIGHT == nullptr) )
             has_right = true;
 
@@ -214,7 +208,9 @@ public:
             HEAD_INIT = false;
           }
 
-          delete [] temp_->address_holder;
+          if(!preserve_){
+            delete [] temp_->address_holder;
+          }
           temp_->address_holder = nullptr;
           delete temp_;
           return true;
@@ -324,33 +320,6 @@ public:
   }
 
 };
-
-#else
-
-template <typename T>
-class mem_heap_debug{
-public:
-  mem_heap_debug(){
-  }
-  bool add_address(T * addr_t){
-    return false;
-  }
-  bool remove_address(T * addr_t){
-    return false;
-  }
-  bool free_address(T * addr_t){
-    return false;
-  }
-  void destroy(){
-  }
-  bool find_address(T * addr_t){
-    return false;
-  }
-  void free_address(){
-  }
-};
-
-#endif
 
 class bad_memory_alloc_error_debug: public std::exception{
   virtual const char * what() const throw(){
