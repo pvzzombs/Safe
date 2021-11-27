@@ -7,14 +7,16 @@
 #include "safe.hpp"
 #include "plf_nanotimer.h"
 
+long TOTAL_TEST=0;
+long PASS_TEST=0;
 const char * title_1 = "Total elapsed time for ";
 const char * title_2 = " ms. \n";
-const char * title_3 = "Passed.\n";
-const char * title_4 = "Failed.\n";
+const char * title_3 = "--- Passed ---\n";
+const char * title_4 = "*** Failed ***\n";
 
 #define PASSED_MACRO title_3
 #define FAILED_MACRO title_4
-#define TEST_IF(msg, lhs, rhs) std::cout<<msg<<' '<<((lhs==rhs)?PASSED_MACRO:FAILED_MACRO);
+#define TEST_IF(msg, lhs, rhs) std::cout<<msg<<" => "<<((++TOTAL_TEST,lhs==rhs)?(++PASS_TEST,PASSED_MACRO):(FAILED_MACRO));
 
 int main(){
   plf::nanotimer timer;
@@ -95,12 +97,21 @@ int main(){
   TEST_IF("[3] == test_3", mem_heap[3], test_3)
   TEST_IF("[4] == test_5", mem_heap[4], test_5)
 
+  // test searching capabilities
+  TEST_IF("address test_3 is found", mem_heap.find_address(test_3), true)
+  TEST_IF("address test_5 is found", mem_heap.find_address(test_5), true)
+  TEST_IF("address test_4 is found", mem_heap.find_address(test_4), true)
+
+  // clean up
   delete [] test_1;
   delete [] test_2;
   delete [] test_3;
 
   mem_heap.delete_list();
+  TEST_IF("mem_heap_debug is empty", mem_heap[0], nullptr)
+  //TEST_IF("Fail the test", false, true)
 
-  std::cout << title_1 << FILENAME << ": " << timer.get_elapsed_ms() << title_2;
-  return 0;
+  std::cout << std::endl << title_1 << FILENAME << ": " << timer.get_elapsed_ms() << title_2;
+  std::cout << (TOTAL_TEST==PASS_TEST?"All Test Passed :)":"Test Failed :(") << std::endl;
+  return (TOTAL_TEST-PASS_TEST);
 }
