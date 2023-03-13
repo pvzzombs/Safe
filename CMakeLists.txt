@@ -20,11 +20,11 @@ include_directories (include)
 
 set (SAFE_HEADER include/safe.hpp)
 
-add_executable ( HEAP examples/heap.cpp ${SAFE_HEADER} )
+add_executable ( HEAP test/heap.cpp ${SAFE_HEADER} )
 
-add_executable ( BOUNDS examples/bounds.cpp ${SAFE_HEADER} )
+add_executable ( BOUNDS test/bounds.cpp ${SAFE_HEADER} )
 
-add_executable ( DEMO examples/demo.cpp ${SAFE_HEADER} )
+add_executable ( DEMO test/demo.cpp ${SAFE_HEADER} )
 
 add_executable ( TEST_1 test/test.cpp ${SAFE_HEADER} )
 

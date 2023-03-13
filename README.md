@@ -155,7 +155,7 @@ terminate called after throwing an instance of 'bad_memory_access_error_debug'
 What we did is just replaced ``int a[10]`` with ``arr_<int> a(10, __LINE__)``. Nice and easy!  
 
 #### An example:
-##### Note: Check the folder named 'examples' for how to use it.
+##### Note: Check the folder named 'test' for how to use it.
 
 ```
 #define DEBUG_
