@@ -1,12 +1,17 @@
-image: Ubuntu
+#image: Ubuntu
 
 build_script:
-  - make
+#  - make
+   - mkdir build
+   - cd build
+   - cmake ..
+   - cmake --build .
 test_script:
-  - ./bounds
-  - ./demo
-  - ./heap
-  - ./test1
+   - ctest 
+#  - ./bounds
+#  - ./demo
+#  - ./heap
+#  - ./test1
 #  - lcov --directory . --capture --output-file coverage.info
 #  - lcov --remove coverage.info '/usr/*' "${HOME}"'/.cache/*' --output-file coverage.info
 #  - lcov --list coverage.info
