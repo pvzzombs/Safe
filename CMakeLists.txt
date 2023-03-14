@@ -6,23 +6,13 @@ project ( Safe CXX )
 
 set ( CXX_STANDARD 11 ) 
 
-#if ( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MINGW")
-#  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-#  MESSAGE("-- GNU Toolchain detected")
-#elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-#  MESSAGE("-- MSVC Toolchain detected")
-#  set ( CXX_STANDARD 11 )
-#else()
-#  set ( CXX_STANDARD 11 ) 
-#endif()
-
 include_directories (include)
 
 set (SAFE_HEADER include/safe.hpp)
 
-set (COVERAGE_CXX_FLAGS "--coverage -g -O0")
+#set (COVERAGE_CXX_FLAGS "--coverage -g -O0")
 
-set (CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${COVERAGE_CXX_FLAGS}")
+#set (CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${COVERAGE_CXX_FLAGS}")
 
 add_executable ( HEAP test/heap.cpp ${SAFE_HEADER} )
 
