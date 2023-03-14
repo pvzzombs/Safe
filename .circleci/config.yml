@@ -40,6 +40,9 @@ jobs:
       - run:
           name: CMAKE Testing
           command: 'cd build && ctest'
+      - run:
+          name: Check files
+          command: 'ls -R'
           
     #   - sonarcloud/scan
 
