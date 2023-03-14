@@ -1,7 +1,14 @@
 image: Ubuntu
 
 init:
-  - cmake --version
+  - curl -Os https://uploader.codecov.io/latest/linux/codecov
+  - chmod +x codecov
 
 build_script:
   - make
+  - ./codecov
+  - lcov --directory . --capture --output-file coverage.info
+  - lcov --remove coverage.info '/usr/*' "${HOME}"'/.cache/*' --output-file coverage.info
+  - lcov --list coverage.info
+  - ./codecov -t ${CODECOV_TOKEN} -f coverage.info
+
