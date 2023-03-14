@@ -8,6 +8,11 @@ build/*.*
 .vscode/*.*
 *.bak
 *.swp
+bounds
+demo
+heap
+test1
+*.gcno
 
 #Codelite generated file
 .codelite/

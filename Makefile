@@ -5,13 +5,13 @@ LDFLAGS=-lgcov
 all: heap bounds demo test1
 
 heap: test/heap.cpp
-	$(CXX) $(CXXFLAGS) -o heap $(LDFLAGS)
+	$(CXX) $(CXXFLAGS) -Iinclude test/heap.cpp -o heap $(LDFLAGS)
 
 bounds: test/bounds.cpp
-	$(CXX) $(CXXFLAGS) -o bounds $(LDFLAGS)
+	$(CXX) $(CXXFLAGS) -Iinclude test/bounds.cpp -o bounds $(LDFLAGS)
 
 demo: test/demo.cpp
-	$(CXX) $(CXXFLAGS) -o demo $(LDFLAGS)
+	$(CXX) $(CXXFLAGS) -Iinclude test/demo.cpp -o demo $(LDFLAGS)
 
 test1: test/test.cpp
-	$(CXX) $(CXXFLAGS) -o test1 $(LDFLAGS)
+	$(CXX) $(CXXFLAGS) -Iinclude test/test.cpp -o test1 $(LDFLAGS)
