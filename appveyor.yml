@@ -1,22 +1,15 @@
 image: Ubuntu
 
-init:
-  - curl --version
-
 build_script:
   - make
+test_script:
   - ./bounds
   - ./demo
   - ./heap
   - ./test1
-  - gcov ./bounds.cpp
-  - gcov ./demo.cpp
-  - gcov ./heap.cpp
-  - gcov ./test.cpp
-  - lcov --directory . --capture --output-file coverage.info
-  - lcov --remove coverage.info '/usr/*' "${HOME}"'/.cache/*' --output-file coverage.info
-  - lcov --list coverage.info
-  - curl -Os https://uploader.codecov.io/latest/linux/codecov
-  - chmod +x codecov
-  - ./codecov -t ${CODECOV_TOKEN} -f coverage.info
-
+#  - lcov --directory . --capture --output-file coverage.info
+#  - lcov --remove coverage.info '/usr/*' "${HOME}"'/.cache/*' --output-file coverage.info
+#  - lcov --list coverage.info
+#  - curl -Os https://uploader.codecov.io/latest/linux/codecov
+#  - chmod +x codecov
+#  - ./codecov -t ${CODECOV_TOKEN} -f coverage.info
