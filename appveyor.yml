@@ -5,7 +5,14 @@ init:
 
 build_script:
   - make
-  - ./codecov
+  - ./bounds
+  - ./demo
+  - ./heap
+  - ./test1
+  - gcov ./bounds.cpp
+  - gcov ./demo.cpp
+  - gcov ./heap.cpp
+  - gcov ./test.cpp
   - lcov --directory . --capture --output-file coverage.info
   - lcov --remove coverage.info '/usr/*' "${HOME}"'/.cache/*' --output-file coverage.info
   - lcov --list coverage.info
