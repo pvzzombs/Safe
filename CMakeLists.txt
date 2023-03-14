@@ -20,6 +20,10 @@ include_directories (include)
 
 set (SAFE_HEADER include/safe.hpp)
 
+set (COVERAGE_CXX_FLAGS "--coverage -g -O0")
+
+set (CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${COVERAGE_CXX_FLAGS}")
+
 add_executable ( HEAP test/heap.cpp ${SAFE_HEADER} )
 
 add_executable ( BOUNDS test/bounds.cpp ${SAFE_HEADER} )
