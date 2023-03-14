@@ -1,0 +1,7 @@
+image: Ubuntu
+
+init:
+  - cmake --version
+
+build_script:
+  - make
