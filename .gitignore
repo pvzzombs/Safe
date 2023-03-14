@@ -9,10 +9,15 @@ build/*.*
 *.bak
 *.swp
 bounds
+bounds.exe
 demo
+demo.exe
 heap
+heap.exe
 test1
+test1.exe
 *.gcno
+*.gcda
 
 #Codelite generated file
 .codelite/
