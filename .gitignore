@@ -12,7 +12,6 @@ build/*.*
 #Codelite generated file
 .codelite/
 Debug/
-Makefile
 Safe.mk
 Safe.project
 Safe.txt
