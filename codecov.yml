@@ -1,2 +1,2 @@
 ignore:
-  - test/acutest.h
+  - "test/acutest.h"
