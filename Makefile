@@ -13,5 +13,5 @@ bounds: test/bounds.cpp
 demo: test/demo.cpp
 	$(CXX) $(CXXFLAGS) -Iinclude test/demo.cpp -o demo $(LDFLAGS)
 
-test: test/test.cpp
-	$(CXX) $(CXXFLAGS) -Iinclude test/test.cpp -o test $(LDFLAGS)
+test1: test/test1.cpp
+	$(CXX) $(CXXFLAGS) -Iinclude test/test1.cpp -o test1 $(LDFLAGS)

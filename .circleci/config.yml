@@ -26,10 +26,10 @@ jobs:
           command: 'make'
       - run:
           name: Run test
-          command: './test'
+          command: './test1'
       - run:
           name: Run gcov
-          command: 'gcov test.cpp'
+          command: 'gcov test1.cpp'
       - run:
           name: Test lcov
           command: 'lcov --directory . --capture --output-file coverage.info'

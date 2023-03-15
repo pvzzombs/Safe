@@ -20,7 +20,7 @@ add_executable ( BOUNDS test/bounds.cpp ${SAFE_HEADER} )
 
 add_executable ( DEMO test/demo.cpp ${SAFE_HEADER} )
 
-add_executable ( TEST_1 test/test.cpp ${SAFE_HEADER} )
+add_executable ( TEST_1 test/test1.cpp ${SAFE_HEADER} )
 
 enable_testing()
 
