@@ -33,3 +33,9 @@ jobs:
       - run:
           name: Test lcov
           command: 'lcov --directory . --capture --output-file coverage.info'
+      - run:
+          name: Download codecov
+          command: 'curl -Os https://uploader.codecov.io/latest/linux/codecov'
+      - run:
+          name: Run codecov
+          command: 'chmod +x codecov && ./codecov -t ${CODECOV_TOKEN} -f coverage.info'
