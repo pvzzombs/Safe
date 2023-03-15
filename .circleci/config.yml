@@ -22,14 +22,14 @@ jobs:
           name: Install LCOV
           command: 'apt-get update && sudo apt-get install -y lcov'
       - run:
-          name: Creating Build Files
-          command: 'cmake -H. -Bbuild'
+          name: Run make
+          command: 'make'
       - run:
-          name: Creating Binary Files
-          command: 'cmake --build build'
+          name: Run test
+          command: './test'
       - run:
-          name: CMAKE Testing
-          command: 'cd build && ctest'
+          name: Run gcov
+          command: 'gcov test.cpp'
       - run:
           name: Test lcov
-          command: 'lcov'
+          command: 'lcov --directory . --capture --output-file coverage.info'
