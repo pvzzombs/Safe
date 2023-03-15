@@ -19,6 +19,9 @@ jobs:
           name: Install CMAKE
           command: 'apt-get update && sudo apt-get install -y cmake'
       - run:
+          name: Install LCOV
+          command: 'apt-get update && sudo apt-get install -y lcov'
+      - run:
           name: Creating Build Files
           command: 'cmake -H. -Bbuild'
       - run:
@@ -27,4 +30,6 @@ jobs:
       - run:
           name: CMAKE Testing
           command: 'cd build && ctest'
-
+      - run:
+          name: Test lcov
+          command: 'lcov'
