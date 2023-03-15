@@ -29,10 +29,10 @@ jobs:
           command: 'make'
       - run:
           name: Run test
-          command: './test1'
+          command: './bounds && ./demo && ./heap && ./test1'
       - run:
           name: Run gcov
-          command: 'gcov test1.cpp'
+          command: 'gcov bounds.cpp demo.cpp heap.cpp test1.cpp'
       - run:
           name: Test lcov
           command: 'lcov --directory . --capture --output-file coverage.info'
