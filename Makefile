@@ -2,7 +2,7 @@ CXX=g++
 CXXFLAGS=--coverage -g -O0 -std=c++11
 LDFLAGS=-lgcov
 
-all: heap bounds demo test
+all: heap bounds demo test1
 
 heap: test/heap.cpp
 	$(CXX) $(CXXFLAGS) -Iinclude test/heap.cpp -o heap $(LDFLAGS)
